@@ -15,7 +15,11 @@
     {
         <div class="col-md-4 mb-4">
             <div class="card h-100 shadow-sm">
-                <img src="@item.ImageUrl" class="card-img-top" alt="@item.Prompt" style="height: 250px; object-fit: cover;">
+                <img src="@item.ImageUrl"
+                     class="card-img-top galeri-resim"
+                     alt="@item.Prompt"
+                     onclick="resmiAc(this)"
+                     style="height: 250px; object-fit: cover;">
 
                 <div class="card-body">
                     <h5 class="card-title text-truncate">@item.Prompt</h5>
@@ -32,3 +36,87 @@
         </div>
     }
 </div>
+
+<div id="resimModal" class="ozel-modal" onclick="modalKapat()">
+    <span class="kapat-tusu">&times;</span>
+    <img class="modal-icerik" id="buyukResim">
+</div>
+
+<style>
+    .galeri-resim {
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+        .galeri-resim:hover {
+            opacity: 0.9;
+            transform: scale(1.02);
+        }
+    .ozel-modal {
+        display: none;
+        position: fixed;
+        z-index: 9999;
+        padding-top: 50px;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0,0,0,0.9);
+    }
+    .modal-icerik {
+        margin: auto;
+        display: block;
+        width: 80%;
+        max-width: 1000px;
+        max-height: 90vh;
+        object-fit: contain;
+        border-radius: 5px;
+        animation-name: zoom;
+        animation-duration: 0.6s;
+    }
+
+    @@keyframes zoom {
+        from {
+            transform: scale(0)
+        }
+
+        to {
+            transform: scale(1)
+        }
+    }
+
+    .kapat-tusu {
+        position: absolute;
+        top: 15px;
+        right: 35px;
+        color: #f1f1f1;
+        font-size: 40px;
+        font-weight: bold;
+        transition: 0.3s;
+        cursor: pointer;
+        z-index: 10000;
+    }
+
+        .kapat-tusu:hover,
+        .kapat-tusu:focus {
+            color: #bbb;
+            text-decoration: none;
+            cursor: pointer;
+        }
+</style>
+
+<script>
+    function resmiAc(element) {
+        var modal = document.getElementById("resimModal");
+        var modalImg = document.getElementById("buyukResim");
+
+        modal.style.display = "block";
+        modalImg.src = element.src;
+    }
+
+    function modalKapat() {
+        var modal = document.getElementById("resimModal");
+        modal.style.display = "none";
+    }
+</script>
