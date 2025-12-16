@@ -1,0 +1,24 @@
+﻿@model AiResimUretme.Models.AiImage
+
+@{
+    ViewData["Title"] = "Sil";
+}
+
+<div class="container mt-5 text-center">
+    <div class="alert alert-danger" role="alert">
+        <h4 class="alert-heading">Silme Onayı</h4>
+        <p>Bu resmi ve kaydı silmek istediğinize emin misiniz?</p>
+        <hr>
+        <p class="mb-0"><strong>Prompt:</strong> @Model.Prompt</p>
+    </div>
+
+    <div class="card mx-auto" style="width: 18rem;">
+        <img src="@Model.ImageUrl" class="card-img-top" alt="...">
+    </div>
+
+    <form asp-action="Delete" class="mt-4">
+        <input type="hidden" asp-for="Id" />
+        <input type="submit" value="Evet, Sil!" class="btn btn-danger btn-lg" />
+        <a asp-action="Index" class="btn btn-secondary btn-lg">Vazgeç</a>
+    </form>
+</div>

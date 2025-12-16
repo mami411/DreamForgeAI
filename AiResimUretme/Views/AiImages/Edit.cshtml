@@ -1,0 +1,40 @@
+﻿@model AiResimUretme.Models.AiImage
+
+@{
+    ViewData["Title"] = "Düzenle";
+}
+
+<div class="container mt-4">
+    <h2>Kaydı Düzenle</h2>
+    <hr />
+    <div class="row">
+        <div class="col-md-6">
+            <img src="@Model.ImageUrl" class="img-fluid rounded mb-3" alt="Mevcut Resim" />
+        </div>
+        <div class="col-md-6">
+            <form asp-action="Edit">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="ImageUrl" />
+                <input type="hidden" asp-for="CreatedDate" />
+
+                <div class="form-group mb-3">
+                    <label asp-for="Prompt" class="control-label">Prompt Metni</label>
+                    <textarea asp-for="Prompt" class="form-control" rows="4"></textarea>
+                    <span asp-validation-for="Prompt" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <input type="submit" value="Kaydet" class="btn btn-primary" />
+                    <a asp-action="Index" class="btn btn-secondary">İptal</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
