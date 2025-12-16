@@ -28,9 +28,17 @@
                     </p>
                 </div>
 
-                <div class="card-footer bg-white border-top-0 d-flex justify-content-between">
-                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-warning btn-sm">Düzenle</a>
-                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger btn-sm">Sil</a>
+                <div class="card-footer bg-white border-top-0 d-flex justify-content-between align-items-center">
+
+                    <button class="btn btn-outline-secondary btn-sm"
+                            onclick="promptKopyala(this)"
+                            data-prompt="@item.Prompt">
+                        <i class="bi bi-clipboard"></i> Kopyala
+                    </button>
+
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger btn-sm">
+                        <i class="bi bi-trash"></i> Sil
+                    </a>
                 </div>
             </div>
         </div>
@@ -75,7 +83,6 @@
         animation-name: zoom;
         animation-duration: 0.6s;
     }
-
     @@keyframes zoom {
         from {
             transform: scale(0)
@@ -98,11 +105,9 @@
         z-index: 10000;
     }
 
-        .kapat-tusu:hover,
-        .kapat-tusu:focus {
+        .kapat-tusu:hover {
             color: #bbb;
             text-decoration: none;
-            cursor: pointer;
         }
 </style>
 
@@ -110,13 +115,33 @@
     function resmiAc(element) {
         var modal = document.getElementById("resimModal");
         var modalImg = document.getElementById("buyukResim");
-
         modal.style.display = "block";
         modalImg.src = element.src;
     }
 
     function modalKapat() {
-        var modal = document.getElementById("resimModal");
-        modal.style.display = "none";
+        document.getElementById("resimModal").style.display = "none";
+    }
+    function promptKopyala(btn) {
+        var promptMetni = btn.getAttribute("data-prompt");
+
+        navigator.clipboard.writeText(promptMetni).then(function() {
+
+        
+            var eskiIcerik = btn.innerHTML; 
+
+            btn.classList.remove("btn-outline-secondary");
+            btn.classList.add("btn-success");
+            btn.innerHTML = "<i class='bi bi-check-lg'></i> Kopyalandı!";
+
+            setTimeout(function() {
+                btn.classList.remove("btn-success");
+                btn.classList.add("btn-outline-secondary");
+                btn.innerHTML = eskiIcerik;
+            }, 2000);
+
+        }, function(err) {
+            alert('Kopyalama başarısız oldu: ' + err);
+        });
     }
 </script>
