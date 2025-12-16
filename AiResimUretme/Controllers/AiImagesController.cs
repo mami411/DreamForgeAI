@@ -2,21 +2,20 @@
 using Microsoft.EntityFrameworkCore;
 using AiResimUretme.Data;
 using AiResimUretme.Models;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Text.Json;
+using AiResimUretme.Services; // Yeni servisimizi buraya ekledik
 
 namespace AiResimUretme.Controllers
 {
     public class AiImagesController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private readonly IConfiguration _configuration;
+        private readonly AiService _aiService; // Yeni servisi tanımladık
 
-        public AiImagesController(ApplicationDbContext context, IConfiguration configuration)
+        // Constructor (Yapıcı Metot) Güncellendi
+        public AiImagesController(ApplicationDbContext context, AiService aiService)
         {
             _context = context;
-            _configuration = configuration;
+            _aiService = aiService; // Servisi içeri aldık
         }
 
         public async Task<IActionResult> Index()
@@ -32,7 +31,6 @@ namespace AiResimUretme.Controllers
             return View();
         }
 
-   
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(AiImage aiImage)
@@ -41,9 +39,14 @@ namespace AiResimUretme.Controllers
             {
                 try
                 {
-                    string generatedImage = await CallAiApi(aiImage.Prompt);
+                    // 1. Yeni Servisi Çağır (Resim byte olarak gelir)
+                    byte[] imageBytes = await _aiService.ResimUret(aiImage.Prompt);
 
-                    aiImage.ImageUrl = generatedImage;
+                    // 2. Gelen resmi Base64 formatına çevir (Veritabanı için)
+                    string base64Image = Convert.ToBase64String(imageBytes);
+                    aiImage.ImageUrl = $"data:image/jpeg;base64,{base64Image}";
+
+                    // 3. Tarihi ekle ve Kaydet
                     aiImage.CreatedDate = DateTime.Now;
 
                     _context.Add(aiImage);
@@ -52,54 +55,20 @@ namespace AiResimUretme.Controllers
                 }
                 catch (Exception ex)
                 {
-                    ModelState.AddModelError("", "Hata: " + ex.Message);
+                    ModelState.AddModelError("", "Resim üretilirken hata oluştu: " + ex.Message);
                 }
             }
             return View(aiImage);
         }
 
+        // About sayfası (Genelde HomeController'da olur ama buradaysa kalsın)
         public IActionResult About()
         {
             return View();
         }
 
-        private async Task<string> CallAiApi(string prompt)
-        {
- 
-            string? apiUrl = _configuration["AiSettings:ApiUrl"];
-            string? apiKey = _configuration["AiSettings:ApiKey"];
-
-            if (string.IsNullOrEmpty(apiUrl) || string.IsNullOrEmpty(apiKey))
-            {
-                throw new Exception("API Ayarları bulunamadı. Lütfen appsettings.json dosyasını kontrol edin.");
-            }
-
-            using (var client = new HttpClient())
-            {
-                var cleanToken = apiKey.Replace("Bearer ", "").Trim();
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", cleanToken);
-
-                var requestData = new
-                {
-                    inputs = prompt,
-                    options = new { wait_for_model = true }
-                };
-
-                var content = new StringContent(JsonSerializer.Serialize(requestData), Encoding.UTF8, "application/json");
-
-                var response = await client.PostAsync(apiUrl, content);
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    var errorContent = await response.Content.ReadAsStringAsync();
-                    throw new Exception($"API Hatası ({response.StatusCode}): {errorContent}");
-                }
-
-                var imageBytes = await response.Content.ReadAsByteArrayAsync();
-                string base64Image = Convert.ToBase64String(imageBytes);
-                return $"data:image/jpeg;base64,{base64Image}";
-            }
-        }
+        // --- ESKİ CallAiApi METODU TAMAMEN SİLİNDİ ---
+        // Artık o işi AiService yapıyor.
 
         public async Task<IActionResult> Delete(int? id)
         {

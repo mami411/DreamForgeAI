@@ -9,7 +9,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(connectionString));
 
 builder.Services.AddControllersWithViews();
-
+builder.Services.AddHttpClient<AiResimUretme.Services.AiService>();
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
