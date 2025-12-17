@@ -7,7 +7,13 @@
 <div class="text-center mb-5">
     <h1 class="display-4">AI Resim Galerisi</h1>
     <p class="lead">Yapay zeka ile hayallerini görsele dönüştür.</p>
-    <a asp-action="Create" class="btn btn-lg btn-primary shadow">✨ Yeni Resim Oluştur</a>
+
+    <div class="d-flex justify-content-center gap-2">
+        <a asp-action="Create" class="btn btn-lg btn-primary shadow">
+            ✨ Yeni Resim Oluştur
+        </a>
+
+    </div>
 </div>
 
 <div class="row">
@@ -24,7 +30,7 @@
                 <div class="card-body">
                     <h5 class="card-title text-truncate">@item.Prompt</h5>
                     <p class="card-text text-muted small">
-                        <i class="bi bi-calendar"></i> @item.CreatedDate.ToString("dd MMM yyyy HH:mm")
+                        <i class="bi bi-calendar"></i> @item.CreatedDate.AddHours(3).ToString("dd MMM yyyy HH:mm")
                     </p>
                 </div>
 
@@ -60,6 +66,7 @@
             opacity: 0.9;
             transform: scale(1.02);
         }
+
     .ozel-modal {
         display: none;
         position: fixed;
@@ -72,6 +79,7 @@
         overflow: auto;
         background-color: rgba(0,0,0,0.9);
     }
+
     .modal-icerik {
         margin: auto;
         display: block;
@@ -83,6 +91,7 @@
         animation-name: zoom;
         animation-duration: 0.6s;
     }
+
     @@keyframes zoom {
         from {
             transform: scale(0)
@@ -118,30 +127,21 @@
         modal.style.display = "block";
         modalImg.src = element.src;
     }
-
     function modalKapat() {
         document.getElementById("resimModal").style.display = "none";
     }
     function promptKopyala(btn) {
         var promptMetni = btn.getAttribute("data-prompt");
-
         navigator.clipboard.writeText(promptMetni).then(function() {
-
-        
-            var eskiIcerik = btn.innerHTML; 
-
+            var eskiIcerik = btn.innerHTML;
             btn.classList.remove("btn-outline-secondary");
             btn.classList.add("btn-success");
             btn.innerHTML = "<i class='bi bi-check-lg'></i> Kopyalandı!";
-
             setTimeout(function() {
                 btn.classList.remove("btn-success");
                 btn.classList.add("btn-outline-secondary");
                 btn.innerHTML = eskiIcerik;
             }, 2000);
-
-        }, function(err) {
-            alert('Kopyalama başarısız oldu: ' + err);
         });
     }
 </script>
