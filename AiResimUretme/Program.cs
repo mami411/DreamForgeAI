@@ -1,4 +1,5 @@
 using AiResimUretme.Data;
+using AiResimUretme.Services;
 using Microsoft.EntityFrameworkCore;
 using System;
 
